@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inventory > Reporting > Stock -->
+    <record id="product_product_stock_tree_uom_conversion" model="ir.ui.view">
+        <field name="name">product.product.stock.list.uom.conversion</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="stock.product_product_stock_tree"/>
+        <field name="arch" type="xml">
+            <field name="uom_id" position="after">
+                <field name="qty_uom_conversion" optional="show"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Inventory > Products > Product Variants list -->
+    <record id="view_stock_product_tree_uom_conversion" model="ir.ui.view">
+        <field name="name">product.product.stock.list.uom.conversion.variants</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="stock.view_stock_product_tree"/>
+        <field name="arch" type="xml">
+            <field name="virtual_available" position="after">
+                <field name="qty_uom_conversion" optional="show" groups="stock.group_stock_user"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Inventory > Products > Products list -->
+    <record id="view_stock_product_template_tree_uom_conversion" model="ir.ui.view">
+        <field name="name">product.template.stock.list.uom.conversion</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="stock.view_stock_product_template_tree"/>
+        <field name="arch" type="xml">
+            <field name="virtual_available" position="after">
+                <field name="qty_uom_conversion"
+                       optional="show"
+                       groups="stock.group_stock_user"
+                       invisible="not show_on_hand_qty_status_button"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Product form: next to On Hand + Unit -->
+    <record id="view_template_property_form_uom_conversion" model="ir.ui.view">
+        <field name="name">product.template.stock.form.uom.conversion</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="stock.view_template_property_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//span[@name='uom_span']" position="after">
+                <field name="qty_uom_conversion"
+                       class="oe_inline text-muted ms-2"
+                       nolabel="1"
+                       invisible="not qty_uom_conversion"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Product template kanban -->
+    <record id="product_template_kanban_stock_uom_conversion" model="ir.ui.view">
+        <field name="name">product.template.kanban.stock.uom.conversion</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="stock.product_template_kanban_stock_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='uom_id']" position="after">
+                <field name="qty_uom_conversion"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

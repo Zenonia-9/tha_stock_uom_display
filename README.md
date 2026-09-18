@@ -1,9 +1,8 @@
 # Stock Unit Conversion Display
 
-Odoo 19 display-only extension for **Inventory → Reporting → Stock**.
-
-Inventory quantity, cost and valuation stay in the product inventory UoM
-(`uom_id`). This module adds a **Unit Conversion** column after **Unit**.
+Odoo 19 display-only extension. Inventory quantity, cost and valuation stay in
+the product inventory UoM (`uom_id`). **Unit Conversion** shows the same quantity
+split into the smallest Sales packaging plus remainder.
 
 ## Rule (method B)
 
@@ -12,7 +11,16 @@ Inventory quantity, cost and valuation stay in the product inventory UoM
 2. Sub unit = remainder in inventory UoM (`uom_id`).
 3. Format: `2 Box of 5, 2 Pack`
 
-If several packagings share the same factor, UoM sequence then name decides.
+## Views (on-hand only)
+
+- Inventory → Reporting → Stock
+- Inventory → Reporting → Locations (list + form)
+- Inventory → Operations → Physical Inventory
+- Inventory → Products → Products / Product Variants lists
+- Product form (next to On Hand)
+- Product kanban
+
+Not added on stock moves, pickings, sales, or purchase lines.
 
 ## Examples
 
@@ -23,9 +31,3 @@ If several packagings share the same factor, UoM sequence then name decides.
 | 10 | bot | Box of 10 | 1 Box of 10 |
 | 3 | bot | Box of 10 | 3 bot |
 | 12 | Pack | *(none)* | *(blank)* |
-
-Zero parts are omitted. No packaging → blank.
-
-## Out of scope
-
-Does not change stock moves, reservation, barcodes, purchase UoM, or valuation.

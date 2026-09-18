@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Locations list (simple + inherited Locations report) -->
+    <record id="view_stock_quant_tree_simple_uom_conversion" model="ir.ui.view">
+        <field name="name">stock.quant.list.simple.uom.conversion</field>
+        <field name="model">stock.quant</field>
+        <field name="inherit_id" ref="stock.view_stock_quant_tree_simple"/>
+        <field name="arch" type="xml">
+            <field name="product_uom_id" position="after">
+                <field name="qty_uom_conversion" optional="show"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Locations editable list (Inventory report / Update Quantity from product) -->
+    <record id="view_stock_quant_tree_editable_uom_conversion" model="ir.ui.view">
+        <field name="name">stock.quant.list.editable.uom.conversion</field>
+        <field name="model">stock.quant</field>
+        <field name="inherit_id" ref="stock.view_stock_quant_tree_editable"/>
+        <field name="arch" type="xml">
+            <field name="product_uom_id" position="after">
+                <field name="qty_uom_conversion" optional="show"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Physical Inventory -->
+    <record id="view_stock_quant_tree_inventory_editable_uom_conversion" model="ir.ui.view">
+        <field name="name">stock.quant.inventory.list.uom.conversion</field>
+        <field name="model">stock.quant</field>
+        <field name="inherit_id" ref="stock.view_stock_quant_tree_inventory_editable"/>
+        <field name="arch" type="xml">
+            <field name="product_uom_id" position="after">
+                <field name="qty_uom_conversion" optional="show"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Quant form -->
+    <record id="view_stock_quant_form_editable_uom_conversion" model="ir.ui.view">
+        <field name="name">stock.quant.form.uom.conversion</field>
+        <field name="model">stock.quant</field>
+        <field name="inherit_id" ref="stock.view_stock_quant_form_editable"/>
+        <field name="arch" type="xml">
+            <xpath expr="//label[@for='quantity']/following-sibling::div[1]" position="after">
+                <field name="qty_uom_conversion" invisible="not qty_uom_conversion"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
