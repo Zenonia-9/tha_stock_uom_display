@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import math
+
 from odoo import models
 from odoo.tools.float_utils import float_compare, float_is_zero, float_round
 
@@ -8,20 +10,20 @@ class QtyUomConversionMixin(models.AbstractModel):
     _name = 'tha.qty.uom.conversion.mixin'
     _description = 'Qty to packaging + remainder formatter'
 
-    def _tha_get_main_packaging_uom(self, inv_uom, packagings):
-        """Smallest Sales packaging that holds more than 1 inventory unit."""
+    def _tha_get_packaging_uoms(self, inv_uom, packagings):
+        """Packaging conversions ordered from largest to smallest."""
         if not inv_uom or not packagings:
-            return self.env['uom.uom']
+            return []
 
         candidates = []
         for packaging in packagings:
-            if packaging == inv_uom:
+            if packaging == inv_uom or not packaging.active:
                 continue
             try:
                 factor = packaging._compute_quantity(1.0, inv_uom, round=False)
             except Exception:
                 continue
-            if not factor:
+            if not math.isfinite(factor):
                 continue
             if float_compare(factor, 1.0, precision_rounding=inv_uom.rounding) <= 0:
                 continue
@@ -31,10 +33,12 @@ class QtyUomConversionMixin(models.AbstractModel):
                 packaging.name or '',
                 packaging,
             ))
-        if not candidates:
-            return self.env['uom.uom']
-        candidates.sort(key=lambda row: (row[0], row[1], row[2]))
-        return candidates[0][3]
+        candidates.sort(key=lambda row: (-row[0], row[1], row[2], row[3].id))
+        return [(row[0], row[3]) for row in candidates]
+
+    def _tha_get_main_packaging_uom(self, inv_uom, packagings):
+        candidates = self._tha_get_packaging_uoms(inv_uom, packagings)
+        return candidates[0][1] if candidates else self.env['uom.uom']
 
     def _tha_format_qty_part(self, qty, uom):
         if not uom:
@@ -53,25 +57,27 @@ class QtyUomConversionMixin(models.AbstractModel):
         if qty is False or qty is None:
             return ''
 
-        main_uom = self._tha_get_main_packaging_uom(inv_uom, packagings)
-        if not main_uom:
+        candidates = self._tha_get_packaging_uoms(inv_uom, packagings)
+        if not candidates:
             return ''
 
-        factor = main_uom._compute_quantity(1.0, inv_uom, round=False)
-        if not factor or float_compare(factor, 1.0, precision_rounding=inv_uom.rounding) <= 0:
-            return ''
-
-        main_qty = float(int(qty / factor))
-        sub_qty = float_round(
-            qty - (main_qty * factor),
-            precision_rounding=inv_uom.rounding,
-        )
-        if float_is_zero(sub_qty, precision_rounding=inv_uom.rounding):
-            sub_qty = 0.0
-
+        sign = -1 if qty < 0 else 1
+        remaining = float_round(abs(qty), precision_rounding=inv_uom.rounding)
         parts = []
-        if not float_is_zero(main_qty, precision_rounding=main_uom.rounding or 0.01):
-            parts.append(self._tha_format_qty_part(main_qty, main_uom))
-        if not float_is_zero(sub_qty, precision_rounding=inv_uom.rounding):
-            parts.append(self._tha_format_qty_part(sub_qty, inv_uom))
+        for factor, packaging in candidates:
+            whole = int(remaining / factor)
+            # Avoid losing an exact package to floating-point conversion noise.
+            if float_is_zero(remaining - (whole + 1) * factor,
+                             precision_rounding=inv_uom.rounding):
+                whole += 1
+            if not whole:
+                continue
+            parts.append(self._tha_format_qty_part(sign * whole, packaging))
+            remaining = float_round(remaining - whole * factor,
+                                    precision_rounding=inv_uom.rounding)
+            if float_is_zero(remaining, precision_rounding=inv_uom.rounding):
+                remaining = 0.0
+                break
+        if not float_is_zero(remaining, precision_rounding=inv_uom.rounding):
+            parts.append(self._tha_format_qty_part(sign * remaining, inv_uom))
         return ', '.join(parts)

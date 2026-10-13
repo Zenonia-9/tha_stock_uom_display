@@ -10,7 +10,7 @@ class StockQuant(models.Model):
     qty_uom_conversion = fields.Char(
         string='Unit Conversion',
         compute='_compute_qty_uom_conversion',
-        help='On Hand split into the smallest Sales packaging, then the '
+        help='On Hand split into Sales packagings from largest to smallest, then the '
              'inventory unit remainder.',
     )
 
@@ -23,6 +23,7 @@ class StockQuant(models.Model):
         'product_id.uom_id.name',
         'product_id.uom_ids',
         'product_id.uom_ids.factor',
+        'product_id.uom_ids.active',
         'product_id.uom_ids.sequence',
         'product_id.uom_ids.name',
     )

@@ -10,7 +10,7 @@ class ProductTemplate(models.Model):
     qty_uom_conversion = fields.Char(
         string='Unit Conversion',
         compute='_compute_qty_uom_conversion',
-        help='On Hand split into the smallest Sales packaging, then the '
+        help='On Hand split into Sales packagings from largest to smallest, then the '
              'inventory unit remainder.',
     )
 
@@ -22,6 +22,7 @@ class ProductTemplate(models.Model):
         'uom_id.name',
         'uom_ids',
         'uom_ids.factor',
+        'uom_ids.active',
         'uom_ids.sequence',
         'uom_ids.name',
     )
