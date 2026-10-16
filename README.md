@@ -9,7 +9,8 @@ split into Sales packagings from largest to smallest, plus any inventory-unit re
 1. Read active Sales packagings (`uom_ids`) whose conversion into `uom_id` is
    strictly greater than 1, ordered by size from largest to smallest.
 2. Show whole packages of each size, using each remaining quantity for the next size.
-3. Show any loose remainder in inventory UoM (`uom_id`). Zero parts are omitted.
+3. Show any loose remainder in inventory UoM (`uom_id`). When no usable packaging
+   conversions exist, show the full quantity in inventory UoM. Zero quantities are omitted.
 4. Negative quantities use the same breakdown with negative counts.
 
 ## Views (on-hand only)
@@ -33,7 +34,7 @@ Not added on stock moves, pickings, sales, or purchase lines.
 | 12 | bot | Box of 10 | 1 Box of 10, 2 bot |
 | 10 | bot | Box of 10 | 1 Box of 10 |
 | 3 | bot | Box of 10 | 3 bot |
-| 12 | Pack | *(none)* | *(blank)* |
+| 12 | Pack | *(none)* | 12 Pack |
 
 ## Validation (2026-10-13, version 19.0.1.2.1)
 

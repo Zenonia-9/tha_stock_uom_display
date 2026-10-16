@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Stock Unit Conversion Display',
-    'version': '19.0.1.2.1',
+    'version': '19.0.1.2.2',
     'category': 'Inventory/Inventory',
     'summary': 'Show On Hand as largest-to-smallest sales packagings and loose remainder',
     'depends': ['stock'],

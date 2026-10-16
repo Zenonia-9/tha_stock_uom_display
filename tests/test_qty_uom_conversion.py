@@ -54,7 +54,8 @@ class TestQtyUomConversion(TransactionCase):
 
     def test_no_packaging(self):
         self.product.uom_ids = [(5, 0, 0)]
-        self.assertEqual(self.product._format_qty_uom_conversion(12.0), '')
+        self.assertEqual(self.product._format_qty_uom_conversion(12.0), '12 Pack')
+        self.assertEqual(self.product._format_qty_uom_conversion(0.0), '')
 
     def test_multiple_packagings_and_loose_remainder(self):
         self.assertEqual(self.product._format_qty_uom_conversion(17),

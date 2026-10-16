@@ -52,14 +52,14 @@ class QtyUomConversionMixin(models.AbstractModel):
         return '%s %s' % (qty_txt, uom.name)
 
     def _tha_format_qty_uom_conversion(self, qty, inv_uom, packagings):
-        if not inv_uom or not packagings:
+        if not inv_uom:
             return ''
         if qty is False or qty is None:
             return ''
 
         candidates = self._tha_get_packaging_uoms(inv_uom, packagings)
         if not candidates:
-            return ''
+            return self._tha_format_qty_part(qty, inv_uom) if qty else ''
 
         sign = -1 if qty < 0 else 1
         remaining = float_round(abs(qty), precision_rounding=inv_uom.rounding)
